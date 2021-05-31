@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+                        
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -35,7 +37,9 @@
       <option>*</option>
       <option>/</option>
     </select>
+    
     <input type="number" name="second-num" id="second-num" />
+    
     <button id="calculate">Calculate</button>
     <br />
     <output></output>
@@ -54,19 +58,89 @@
     <button>Console Trace</button>
     <button>Trigger a Global Error</button>
   </section>
-
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+  window.TrackJS && TrackJS.install({ 
+    token: "fc2f251d03e643339253140d07ca42e7"
+    // for more configuration options, see https://docs.trackjs.com
+  });
+</script>
   <script>
-    let calculateBtn = document.querySelector('#calculate');
-    calculateBtn.addEventListener('click', () => {
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
-
+    class InputError extends Error {
+    constructor(message) {
+    super(message); 
+    this.name = "No Input"; 
+      }
+    }
+    
+      let calculateBtn = document.querySelector('#calculate');
+      calculateBtn.addEventListener('click', () => {
+        try{
+        var output = document.querySelector('output');
+        var firstNum = document.querySelector('#first-num').value;
+        var secondNum = document.querySelector('#second-num').value;
+        var operator = document.querySelector('#operator').value;
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+        }
+        catch (err) {
+            if (err instanceof TypeError) {
+              console.log("This is a type error");
+            }
+            let a = document.querySelector('output');
+            a.innerHTML = "NULL";
+            
+          }
+          finally {
+            console.log("The calculation should be done by now.")
+          }
+      });
+    
+    
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+    
     // TODO - Make buttons functional
+    errorBtns[0].addEventListener("click", function(){ console.log("Console Log Demo"); });
+    errorBtns[1].addEventListener("click", function(){ console.error("Console Error Demo"); });
+    errorBtns[2].addEventListener("click", function(){ console.dir(document.body); });
+    errorBtns[3].addEventListener("click", function(){ console.dirxml(document); });
+    let label = 'Bunch of Console Messages';
+    errorBtns[4].addEventListener("click", function(){ console.group(label); });
+    errorBtns[5].addEventListener("click", function(){ console.groupEnd(label); });
+    errorBtns[6].addEventListener("click", function(){ 
+      console.table([
+          {
+            name: 'first-num',
+            value: document.querySelector('#first-num').value,
+          },
+          {
+            name: 'operator',
+            value: document.querySelector('#operator').value,
+          },
+          {
+            name: 'second-num',
+            value: document.querySelector('#second-num').value,
+          },
+          {
+            name: 'output',
+            value: document.querySelector('output').innerHTML,
+          }
+        ]); 
+    });
+    let timeLabel= "timer"
+    errorBtns[7].addEventListener("click", function(){ console.time(timeLabel); });
+    errorBtns[8].addEventListener("click", function(){ console.timeEnd(timeLabel); });
+    errorBtns[9].addEventListener("click", function(){ callATrace(); });
+    function callATrace() {
+      console.trace();
+    }
+    errorBtns[10].addEventListener("click", function(){ 
+      
+      throw new InputError("No input or bad input in:");
+    });
+    window.onerror = function(message, url, line, col, error) {
+          console.log("message: " + message+" at line " + line + " and column " + col);
+    };  
+  
   </script>
 </body>
 </html>
